@@ -6,6 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+
+#include "MultiplayerShooter/Weapon/Weapon.h"
 
 
 AMPShooterCharacter::AMPShooterCharacter()
@@ -28,6 +31,13 @@ AMPShooterCharacter::AMPShooterCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+void AMPShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AMPShooterCharacter, OverlappingWeapon, COND_OwnerOnly);
+}
+
 void AMPShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -38,6 +48,36 @@ void AMPShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+// called on the server
+void AMPShooterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
+{
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(false);
+	}
+	OverlappingWeapon = Weapon;
+	// if player is a server
+	if (IsLocallyControlled())
+	{
+		if (OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickupWidget(true);
+		}
+	}
+}
+
+void AMPShooterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
+{
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(true);
+	}
+	if (LastWeapon)
+	{
+		LastWeapon->ShowPickupWidget(false);
+	}
 }
 
 void AMPShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
