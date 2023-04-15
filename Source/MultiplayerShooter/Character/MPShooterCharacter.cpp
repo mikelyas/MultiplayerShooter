@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "MultiplayerShooter/Weapon/Weapon.h"
+#include "MultiplayerShooter/MPShooterComponents/CombatComponent.h"
 
 
 AMPShooterCharacter::AMPShooterCharacter()
@@ -26,6 +27,9 @@ AMPShooterCharacter::AMPShooterCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
+
+	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	Combat->SetIsReplicated(true);
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -90,6 +94,17 @@ void AMPShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMPShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &AMPShooterCharacter::Turn);
 	PlayerInputComponent->BindAxis("LookUp", this, &AMPShooterCharacter::LookUp);
+	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &AMPShooterCharacter::EquipButtonPressed);
+}
+
+void AMPShooterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (Combat)
+	{
+		Combat->Character = this;
+	}
 }
 
 void AMPShooterCharacter::MoveForward(float Axis)
@@ -120,5 +135,13 @@ void AMPShooterCharacter::Turn(float Axis)
 void AMPShooterCharacter::LookUp(float Axis)
 {
 	AddControllerPitchInput(Axis);
+}
+
+void AMPShooterCharacter::EquipButtonPressed()
+{
+	if (Combat && HasAuthority())
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
+	}
 }
 
