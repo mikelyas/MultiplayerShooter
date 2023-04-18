@@ -33,6 +33,7 @@ AMPShooterCharacter::AMPShooterCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetMovementComponent()->NavAgentProps.bCanCrouch = true;
 }
 
 void AMPShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -95,6 +96,9 @@ void AMPShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis("Turn", this, &AMPShooterCharacter::Turn);
 	PlayerInputComponent->BindAxis("LookUp", this, &AMPShooterCharacter::LookUp);
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &AMPShooterCharacter::EquipButtonPressed);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AMPShooterCharacter::CrouchButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &AMPShooterCharacter::AimButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &AMPShooterCharacter::AimButtonReleased);
 }
 
 void AMPShooterCharacter::PostInitializeComponents()
@@ -158,5 +162,43 @@ void AMPShooterCharacter::ServerEquipButtonPressed_Implementation()
 	{
 		Combat->EquipWeapon(OverlappingWeapon);
 	}
+}
+
+void AMPShooterCharacter::CrouchButtonPressed()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Crouch();
+	}
+}
+
+void AMPShooterCharacter::AimButtonPressed()
+{
+	if (Combat)
+	{
+		Combat->SetIsAiming(true);
+	}
+}
+
+void AMPShooterCharacter::AimButtonReleased()
+{
+	if (Combat)
+	{
+		Combat->SetIsAiming(false);
+	}
+}
+
+bool AMPShooterCharacter::IsWeaponEquipped() const
+{
+	return (Combat && Combat->EquippedWeapon);
+}
+
+bool AMPShooterCharacter::IsAiming() const
+{
+	return (Combat && Combat->bIsAiming);
 }
 

@@ -16,17 +16,30 @@ class MULTIPLAYERSHOOTER_API UCombatComponent : public UActorComponent
 
 public:	
 	UCombatComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	friend class AMPShooterCharacter;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void EquipWeapon(AWeapon* WeaponToEquip);
 protected:
 	virtual void BeginPlay() override;
 
+	void SetIsAiming(const bool& bAiming);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetIsAiming(bool bAiming);
+
+	UFUNCTION()
+	void OnRep_EquippedWeapon();
+
 private:
 	class AMPShooterCharacter* Character;
 
+	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	AWeapon* EquippedWeapon;
+
+	UPROPERTY(Replicated)
+	bool bIsAiming;
 public:	
 
 	UPROPERTY(VisibleAnywhere)
