@@ -32,6 +32,12 @@ protected:
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
 
+	UPROPERTY(EditAnywhere)
+	float BaseWalkSpeed;
+
+	UPROPERTY(EditAnywhere)
+	float AimWalkSpeed;
+
 private:
 	class AMPShooterCharacter* Character;
 
