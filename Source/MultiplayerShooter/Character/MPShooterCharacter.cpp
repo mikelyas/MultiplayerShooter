@@ -240,3 +240,9 @@ bool AMPShooterCharacter::IsAiming() const
 	return (Combat && Combat->bIsAiming);
 }
 
+AWeapon* AMPShooterCharacter::GetEquippedWeapon() const
+{
+	if (Combat == nullptr) return nullptr;
+	return Combat->EquippedWeapon;
+}
+

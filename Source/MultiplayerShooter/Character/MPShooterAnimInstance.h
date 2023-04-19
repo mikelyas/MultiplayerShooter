@@ -34,6 +34,9 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	bool bWeaponEquipped;
 
+	UPROPERTY()
+	class AWeapon* EquippedWeapon;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	bool bIsCrouched;
 
@@ -54,4 +57,10 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Aiming", meta = (AllowPrivateAccess = "true"))
 	float AO_Pitch;
+
+	UPROPERTY(VisibleAnywhere, Category = "IK")
+	FName WeaponSocketLeftHand;
+
+	UPROPERTY(BlueprintReadOnly, Category = "IK", meta = (AllowPrivateAccess = "true"))
+	FTransform LeftHandTransform;
 };
