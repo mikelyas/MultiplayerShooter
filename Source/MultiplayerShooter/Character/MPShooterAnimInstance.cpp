@@ -56,6 +56,7 @@ void UMPShooterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	AO_Yaw = MPShooterCharacter->GetAO_Yaw();
 	AO_Pitch = MPShooterCharacter->GetAO_Pitch();
+	TurningInPlace = MPShooterCharacter->GetTurningInPlace();
 
 	if (bWeaponEquipped && EquippedWeapon && EquippedWeapon->GetWeaponMesh() && MPShooterCharacter->GetMesh())
 	{

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "MultiplayerShooter/MPShooterTypes/TurningInPlace.h"
 #include "MPShooterAnimInstance.generated.h"
 
 /**
@@ -63,4 +64,7 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = "IK", meta = (AllowPrivateAccess = "true"))
 	FTransform LeftHandTransform;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	ETurningInPlace TurningInPlace;
 };
